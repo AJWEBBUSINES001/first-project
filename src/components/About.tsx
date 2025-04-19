@@ -2,7 +2,7 @@ import { Car, HeartHandshake, Users2 } from 'lucide-react';
 
 const About = () => {
   return (
-    <div id='about' className="bg-white text-black min-h-screen py-20 px-6">
+    <div id='about' className="bg-white text-black pt-20 px-6 border-y pb-10">
       <div className="max-w-5xl mx-auto text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-6">About EAZIE-GO</h1>
         <p className="text-lg text-gray-700 mb-12 max-w-3xl mx-auto">

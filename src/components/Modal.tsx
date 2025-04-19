@@ -1,7 +1,8 @@
+import React from 'react';
 import { Parallax } from 'react-parallax';
 import { motion } from 'framer-motion';
-import modalImg from '../assets/modal.jpg'; // Adjust the path as necessary
 import { Link } from 'react-router-dom';
+import modalImg from '../assets/modal.jpg'; // Works if Webpack/Vite is configured correctly
 
 const fadeIn = {
   hidden: { opacity: 0 },
@@ -11,7 +12,7 @@ const fadeIn = {
   }
 };
 
-const Modal = () => (
+const Modal: React.FC = () => (
   <Parallax
     className="h-[calc(100vh-0px)] sm:h-screen flex justify-center items-center overflow-x-hidden"
     blur={2}
@@ -30,8 +31,9 @@ const Modal = () => (
         className="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight shadow-sm"
         variants={fadeIn}
       >
-        Where Every <span className="text-yellow-400 italic">Trip</span> Feels <br /> First <span className=''>Class</span>
+        Where Every <span className="text-yellow-400 italic">Trip</span> Feels <br /> First <span className="">Class</span>
       </motion.h1>
+
       <motion.p
         className="max-w-2xl text-sm md:text-xl lg:text-2xl opacity-90"
         variants={fadeIn}
@@ -39,15 +41,22 @@ const Modal = () => (
       >
         Welcome to <strong>Eazie-Go</strong>, your trusted partner for fast and reliable taxi services. Enjoy a comfortable journey with our professional drivers. Book your ride now and experience exceptional service at competitive prices.
       </motion.p>
+
       <motion.div
         className="flex flex-wrap justify-center gap-2 sm:gap-6"
         variants={fadeIn}
         transition={{ delay: 0.4 }}
       >
-        <Link to={'book-driver'} className="shadow p-2 sm:p-3 px-6 rounded text-lg bg-black/10 border border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black transition-all duration-500">
+        <Link
+          to="book-driver"
+          className="shadow p-2 sm:p-3 px-6 rounded text-lg bg-black/10 border border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black transition-all duration-500"
+        >
           Book a Ride
         </Link>
-        <Link to={'book-driver'} className="p-2 sm:p-3 px-6 rounded text-lg border border-yellow-400 bg-yellow-400 text-black hover:bg-yellow-300 transition-all duration-500">
+        <Link
+          to="book-driver"
+          className="p-2 sm:p-3 px-6 rounded text-lg border border-yellow-400 bg-yellow-400 text-black hover:bg-yellow-300 transition-all duration-500"
+        >
           Learn More
         </Link>
       </motion.div>

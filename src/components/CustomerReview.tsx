@@ -1,6 +1,13 @@
+import React from 'react';
 import { Star, StarHalf, Quote } from 'lucide-react';
 
-const reviews = [
+type Review = {
+  name: string;
+  message: string;
+  rating: number;
+};
+
+const reviews: Review[] = [
   {
     name: 'Sarah M.',
     message:
@@ -27,7 +34,7 @@ const reviews = [
   },
 ];
 
-const renderStars = (rating) => {
+const renderStars = (rating: number) => {
   const fullStars = Math.floor(rating);
   const halfStar = rating % 1 >= 0.5;
   const stars = [];
@@ -43,9 +50,9 @@ const renderStars = (rating) => {
   return stars;
 };
 
-const Reviews = () => {
+const Reviews: React.FC = () => {
   return (
-    <div className="bg-white text-black py-20 px-6 min-h-screen">
+    <div className="bg-white border-y text-black pt-20 pb-10 sm:pb-0 px-6 min-h-screen">
       <div className="max-w-4xl mx-auto text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold">Customer Reviews</h1>
         <p className="text-lg text-gray-700 mt-4">
