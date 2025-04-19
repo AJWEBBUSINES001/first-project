@@ -48,7 +48,7 @@ const Pricing = () => {
         className="sm:h-screen flex justify-center items-center overflow-x-hidden"
         blur={10}
         bgImage={Fastcar}
-        strength={800}
+        strength={600}
       >
     <div className="min-h-screen py-20 px-6 text-black">
       <div className="max-w-6xl mx-auto text-center mb-16">

@@ -12,7 +12,6 @@ import eaziecar from '@/assets/eaziecar.png'
 const Home: React.FC = () => {
   return (
     <div>
-      <Header />
       <Modal />
       <Services />
       <Pricing />
@@ -25,7 +24,6 @@ const Home: React.FC = () => {
         <img src={eaziecar} alt="Eaziecar Logo" className="w-[200px]" />
       </div>
       <FAQ />
-      <Footer />
     </div>
   );
 };

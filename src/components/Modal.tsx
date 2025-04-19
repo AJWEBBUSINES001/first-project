@@ -17,7 +17,7 @@ const Modal: React.FC = () => (
     className="h-[calc(100vh-0px)] sm:h-screen flex justify-center items-center overflow-x-hidden"
     blur={2}
     bgImage={modalImg}
-    strength={800}
+    strength={200}
   >
     <motion.div
       id="home"
