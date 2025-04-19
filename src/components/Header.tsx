@@ -3,7 +3,7 @@ import { Phone, Mail, Menu, X } from 'lucide-react';
 import logoWhite from '../assets/logowhite.png';
 import { Link } from 'react-router-dom';
 
-function Header({logocolor}:any) {
+function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
