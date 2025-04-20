@@ -101,7 +101,6 @@ const DriverBooking: React.FC = () => {
     setShowAlert(true);
     setTimeout(() => {
       setShowAlert(false);
-      navigate('/')
     }, 3000);
   };
 
@@ -119,8 +118,10 @@ const DriverBooking: React.FC = () => {
       setIsLoading(false)
       setisError(false)
       form.reset()
+      setTimeout(() => {
+        navigate('/')
+      },3000)
     } catch (err) {
-      console.log("FAILED...", err);
       setisError(true)
       setIsLoading(false)
     }
