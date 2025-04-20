@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Confirm from "@/components/confirm";
 
 const DefaultIcon = L.icon({
   iconUrl,
@@ -38,17 +39,6 @@ const DefaultIcon = L.icon({
   iconAnchor: [12, 41],
 });
 L.Marker.prototype.options.icon = DefaultIcon;
-
-interface FormState {
-  name: string;
-  phone: string;
-  email: string;
-  pickup: string;
-  dropoff: string;
-  serviceType: string;
-  datetime: string;
-  instructions: string;
-}
 
 const LocationPicker = ({
   onSelect,
@@ -64,6 +54,9 @@ const LocationPicker = ({
 };
 
 const DriverBooking: React.FC = () => {
+  const [showAlert, setShowAlert] = useState(false);
+  const duration = 3000
+  
   const formSchema = z.object({
     name: z.string().min(3, "Name must contain at least 3 characters").max(50),
     phone: z.string().regex(/^\d{10}$/, "Phone number must be 10 digits"),
@@ -77,21 +70,19 @@ const DriverBooking: React.FC = () => {
       .min(3, "Dropoff location must contain at least 3 characters")
       .max(50),
     serviceType: z.string().min(2).max(50),
-    // datetime: z.string().min(1, "Please select a date and time"),
     instructions: z.string().max(50).optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      phone: "",
-      email: "",
-      pickup: "",
-      dropoff: "",
-      instructions: "",
-      serviceType: "",
-      // datetime: "",
+      name: "linton",
+      phone: "0543576794",
+      email: "adujoy05@gmail.com",
+      pickup: "dasdafsdf",
+      dropoff: "asdfadsf",
+      instructions: "asdfasdf",
+      serviceType: "adfadsfadsfads",
     },
   });
 
@@ -99,8 +90,17 @@ const DriverBooking: React.FC = () => {
     [number, number] | null
   >(null);
 
+  const handleShowAlert = () => {
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 3000);
+  };
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    handleShowAlert()
+    console.log(showAlert)
   }
 
   return (
@@ -251,11 +251,15 @@ const DriverBooking: React.FC = () => {
               )}
             />
 
-            <Button type="submit" className="w-full sm:w-auto">
+            <Button type="submit" className="w-full sm:w-auto" disabled={showAlert}>
               Book Driver
             </Button>
           </form>
         </Form>
+
+        <div className={`${showAlert ? "translate-x-0" : "translate-x-[150%]"} fixed top-[120px] right-4 z-50 transition-all duration-300 ease-in-out`}>
+          <Confirm show={showAlert}/>
+        </div>
 
         <div className="mt-12 flex flex-col sm:flex-row justify-between items-center">
           <a

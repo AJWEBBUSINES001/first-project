@@ -50,6 +50,13 @@ export default {
           4: "hsl(var(--chart-4))",
           5: "hsl(var(--chart-5))",
         },
+        keyframes: {
+          shrink: {
+            from: { width: "100%" },
+            to: { width: "0%" },
+          },
+        },
+        
       },
     },
   },
