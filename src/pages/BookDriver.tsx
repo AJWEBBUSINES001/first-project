@@ -1,3 +1,6 @@
+import React, { useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import emailjs from "@emailjs/browser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
@@ -55,8 +58,12 @@ const LocationPicker = ({
 
 const DriverBooking: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
-  const duration = 3000
-  
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setisError] = useState(false)
+  const duration = 3000;
+  const formRef = useRef<HTMLFormElement>(null);
+  const navigate = useNavigate()
+
   const formSchema = z.object({
     name: z.string().min(3, "Name must contain at least 3 characters").max(50),
     phone: z.string().regex(/^\d{10}$/, "Phone number must be 10 digits"),
@@ -76,13 +83,13 @@ const DriverBooking: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "linton",
-      phone: "0543576794",
-      email: "adujoy05@gmail.com",
-      pickup: "dasdafsdf",
-      dropoff: "asdfadsf",
-      instructions: "asdfasdf",
-      serviceType: "adfadsfadsfads",
+      name: "",
+      phone: "",
+      email: "",
+      pickup: "",
+      dropoff: "",
+      instructions: "",
+      serviceType: "",
     },
   });
 
@@ -94,13 +101,30 @@ const DriverBooking: React.FC = () => {
     setShowAlert(true);
     setTimeout(() => {
       setShowAlert(false);
+      navigate('/')
     }, 3000);
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    handleShowAlert()
-    console.log(showAlert)
+  async function onSubmit() {
+    try {
+      setIsLoading(true)
+      await emailjs.sendForm(
+        "service_hfezjeq",
+        "template_xi9bf46",
+        formRef.current!,
+        {
+          publicKey: import.meta.env.VITE_PUBLIC_KEY
+        }
+      );
+      setIsLoading(false)
+      setisError(false)
+      form.reset()
+    } catch (err) {
+      console.log("FAILED...", err);
+      setisError(true)
+      setIsLoading(false)
+    }
+    handleShowAlert();
   }
 
   return (
@@ -129,7 +153,11 @@ const DriverBooking: React.FC = () => {
 
         {/* Form */}
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            ref={formRef}
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-lg">
               <FormField
                 control={form.control}
@@ -251,14 +279,26 @@ const DriverBooking: React.FC = () => {
               )}
             />
 
-            <Button type="submit" className="w-full sm:w-auto" disabled={showAlert}>
-              Book Driver
+            <Button
+              type="submit"
+              className="w-full sm:w-auto h-full"
+              disabled={showAlert}
+            >
+              {isLoading? <div className="loader"></div> : "Book Driver"}
             </Button>
+            
           </form>
         </Form>
 
-        <div className={`${showAlert ? "translate-x-0" : "translate-x-[150%]"} fixed top-[120px] right-4 z-50 transition-all duration-300 ease-in-out`}>
-          <Confirm show={showAlert}/>
+        <div
+          className={`${
+            showAlert ? "translate-x-0" : "translate-x-[150%]"
+          } fixed top-[120px] right-4 z-50 transition-all duration-300 ease-in-out`}
+        >
+          {isError ? 
+          <Confirm variant="warning" message="Something went wrong" show={showAlert} />:
+          <Confirm show={showAlert} />
+        }
         </div>
 
         <div className="mt-12 flex flex-col sm:flex-row justify-between items-center">
