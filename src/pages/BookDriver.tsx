@@ -116,12 +116,12 @@ const DriverBooking: React.FC = () => {
             className="w-28 h-28 object-cover rounded-full"
           />
           <div>
-            <h2 className="text-2xl font-semibold">John Doe</h2>
+            <h2 className="text-2xl font-semibold">Appiah Ernest</h2>
             <p className="text-gray-600 flex items-center gap-2">
-              <Mail size={16} /> johndoe@eaziego.com
+              <Mail size={16} /> appiahernest3677@gmail.com
             </p>
             <p className="text-gray-600 flex items-center gap-2">
-              <Phone size={16} /> +1 (437) 999 9999
+              <Phone size={16} /> +1 (437) 443 0485
             </p>
             <p className="text-yellow-500">⭐ 4.8/5 Rating</p>
           </div>
