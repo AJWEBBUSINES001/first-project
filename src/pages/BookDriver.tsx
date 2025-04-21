@@ -1,9 +1,8 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -11,18 +10,16 @@ import { MapPin, Phone, Mail } from "lucide-react";
 import Driverprofile from "@/assets/driverprofile.jpg";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-// Fix Leaflet marker icons issue
 import iconUrl from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,7 +30,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Confirm from "@/components/confirm";
+import Confirm from "@/components/Confirm";
+import Header from "@/components/Header";
 
 const DefaultIcon = L.icon({
   iconUrl,
@@ -43,42 +41,36 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const LocationPicker = ({
-  onSelect,
-}: {
-  onSelect: (latlng: string) => void;
-}) => {
+const LocationPicker = ({ onSelect }: { onSelect: (latlng: string) => void }) => {
   useMapEvents({
-    click(e: any) {
+    click(e) {
       onSelect(`${e.latlng.lat}, ${e.latlng.lng}`);
     },
   });
   return null;
 };
 
+const formSchema = z.object({
+  name: z.string().min(3).max(50),
+  phone: z
+  .string()
+  .min(7, "Phone number is too short")
+  .max(20, "Phone number is too long")
+  .regex(/^\+\d{1,3}\d{4,}$/, "Invalid phone number format"),
+  email: z.string().email(),
+  pickup: z.string().min(3).max(50),
+  dropoff: z.string().min(3).max(50),
+  serviceType: z.string().min(2).max(50),
+  instructions: z.string().max(50).optional(),
+});
+
 const DriverBooking: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
-  const [isLoading, setIsLoading] = useState(false)
-  const [isError, setisError] = useState(false)
-  const duration = 3000;
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [dropoffPosition, setDropoffPosition] = useState<[number, number] | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const navigate = useNavigate()
-
-  const formSchema = z.object({
-    name: z.string().min(3, "Name must contain at least 3 characters").max(50),
-    phone: z.string().regex(/^\d{10}$/, "Phone number must be 10 digits"),
-    email: z.string().email(),
-    pickup: z
-      .string()
-      .min(3, "Pickup location must contain at least 3 characters")
-      .max(50),
-    dropoff: z
-      .string()
-      .min(3, "Dropoff location must contain at least 3 characters")
-      .max(50),
-    serviceType: z.string().min(2).max(50),
-    instructions: z.string().max(50).optional(),
-  });
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -93,10 +85,6 @@ const DriverBooking: React.FC = () => {
     },
   });
 
-  const [dropoffPosition, setDropoffPosition] = useState<
-    [number, number] | null
-  >(null);
-
   const handleShowAlert = () => {
     setShowAlert(true);
     setTimeout(() => {
@@ -106,34 +94,35 @@ const DriverBooking: React.FC = () => {
 
   async function onSubmit() {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       await emailjs.sendForm(
-        "service_hfezjeq",
-        "template_xi9bf46",
+        "service_gfxg6or",
+        "template_cn22w0f",
         formRef.current!,
         {
-          publicKey: import.meta.env.VITE_PUBLIC_KEY
+          publicKey: import.meta.env.VITE_PUBLIC_KEY || "",
         }
       );
-      setIsLoading(false)
-      setisError(false)
-      form.reset()
+      setIsLoading(false);
+      setIsError(false);
+      form.reset();
       setTimeout(() => {
-        navigate('/')
-      },3000)
+        navigate("/");
+      }, 3000);
     } catch (err) {
-      setisError(true)
-      setIsLoading(false)
+      setIsError(true);
+      setIsLoading(false);
     }
     handleShowAlert();
   }
 
   return (
+    <>
+    <Header headcolor="bg-black" />
     <main className="pt-[150px]">
-      <div className="min-h-screen bg-[whitesmoke] px-6 py-12 max-w-4xl mx-auto">
+      <div className="min-h-screen bg-white p-6 max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-6 text-center">Book Driver</h1>
 
-        {/* Driver Info */}
         <div className="mb-10 flex items-center gap-6 border-b pb-6 flex-wrap">
           <img
             src={Driverprofile}
@@ -143,95 +132,106 @@ const DriverBooking: React.FC = () => {
           <div>
             <h2 className="text-2xl font-semibold">Appiah Ernest</h2>
             <p className="text-gray-600 flex items-center gap-2">
-              <Mail size={16} /> appiahernest3677@gmail.com
+              <Mail size={16} />
+              appiahernest3677@gmail.com
+              <a
+                href="mailto:appiahernest3677@gmail.com"
+                className="ml-2 text-blue-600 underline"
+              >
+                Email
+              </a>
             </p>
             <p className="text-gray-600 flex items-center gap-2">
-              <Phone size={16} /> +1 (437) 443 0485
+              <Phone size={16} />
+              +1 (437) 443 0485
+              <a
+                href="tel:+14374430485"
+                className="ml-2 text-green-600 underline"
+              >
+                Call
+              </a>
             </p>
             <p className="text-yellow-500">⭐ 4.8/5 Rating</p>
           </div>
         </div>
 
-        {/* Form */}
         <Form {...form}>
           <form
             ref={formRef}
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-4"
           >
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-lg">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="Full name" type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        placeholder="Active Phone Number"
-                        type="tel"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="Email" type="email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="pickup"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        placeholder="Pickup Location"
-                        type="text"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="dropoff"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        placeholder="Drop-off Location"
-                        type="text"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Full name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Phone</label>
+                  <PhoneInput
+                    country="ca"
+                    value={form.watch("phone")}
+                    onChange={(value) => form.setValue("phone", `+${value}`)}
+                    inputStyle={{ width: "100%" }}
+                    inputProps={{
+                      name: "phone",
+                      required: true,
+                      autoFocus: false,
+                    }}
+                  />
+                  <FormMessage>{form.formState.errors.phone?.message}</FormMessage>
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Email" type="email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="pickup"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Pickup Location" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="dropoff"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Drop-off Location" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+
               <FormField
                 control={form.control}
                 name="serviceType"
@@ -247,15 +247,13 @@ const DriverBooking: React.FC = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Airport Pickup">
-                          Airport Pickup
-                        </SelectItem>
-                        <SelectItem value="Package Delivery">
-                          Package Delivery
-                        </SelectItem>
-                        <SelectItem value="Shopping Trip">
-                          Shopping Trip
-                        </SelectItem>
+                        {["Airport Pickup", "Package Delivery", "Shopping Trip"].map(
+                          (item) => (
+                            <SelectItem key={item} value={item}>
+                              {item}
+                            </SelectItem>
+                          )
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -280,26 +278,22 @@ const DriverBooking: React.FC = () => {
               )}
             />
 
-            <Button
-              type="submit"
-              className="w-full sm:w-auto h-full"
-              disabled={showAlert}
-            >
-              {isLoading? <div className="loader"></div> : "Book Driver"}
+
+            <Button type="submit" className="w-full sm:w-auto h-full" disabled={showAlert}>
+              {isLoading ? <div className="loader"></div> : "Book Driver"}
             </Button>
-            
           </form>
         </Form>
 
         <div
           className={`${
-            showAlert ? "translate-x-0" : "translate-x-[150%]"
-          } fixed top-[120px] right-4 z-50 transition-all duration-300 ease-in-out`}
+            showAlert ? "translate-x-0" : "translate-x-[150%]"} fixed top-[120px] right-4 z-50 transition-all duration-300 ease-in-out`}
         >
-          {isError ? 
-          <Confirm variant="warning" message="Something went wrong" show={showAlert} />:
-          <Confirm show={showAlert} />
-        }
+          {isError ? (
+            <Confirm variant="warning" message="Something went wrong" show={showAlert} />
+          ) : (
+            <Confirm show={showAlert} />
+          )}
         </div>
 
         <div className="mt-12 flex flex-col sm:flex-row justify-between items-center">
@@ -315,7 +309,6 @@ const DriverBooking: React.FC = () => {
           </span>
         </div>
 
-        {/* Map */}
         <label className="block text-sm font-medium text-gray-700 mt-6 mb-2">
           Pick Drop-off Location on the map
         </label>
@@ -325,10 +318,9 @@ const DriverBooking: React.FC = () => {
           style={{ height: "300px" }}
           className="rounded"
         >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <TileLayer className="" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <LocationPicker
             onSelect={(val) => {
-              // setForm((prev) => ({ ...prev, dropoff: val }));
               const [lat, lng] = val.split(",").map(Number);
               setDropoffPosition([lat, lng]);
             }}
@@ -337,6 +329,7 @@ const DriverBooking: React.FC = () => {
         </MapContainer>
       </div>
     </main>
+    </>
   );
 };
 

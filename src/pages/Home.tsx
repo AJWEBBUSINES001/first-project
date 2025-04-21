@@ -12,6 +12,7 @@ import eaziecar from '@/assets/eaziecar.png'
 const Home: React.FC = () => {
   return (
     <div>
+      <Header headcolor="bg-transparent" />
       <Modal />
       <Services />
       <Pricing />
