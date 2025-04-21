@@ -119,7 +119,7 @@ const DriverBooking: React.FC = () => {
   return (
     <>
     <Header headcolor="bg-black" />
-    <main className="pt-[50px]">
+    <main className="pt-[100px]">
       <div className="min-h-screen bg-white p-6 max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-6 text-center">Book Driver</h1>
 
