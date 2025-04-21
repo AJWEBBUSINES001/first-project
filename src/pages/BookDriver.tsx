@@ -33,7 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Confirm from "@/components/confirm";
+import Confirm from "@/components/Confirm";
 
 const DefaultIcon = L.icon({
   iconUrl,
