@@ -177,7 +177,6 @@ const DriverBooking: React.FC = () => {
                 />
 
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Phone</label>
                   <PhoneInput
                     country="ca"
                     value={form.watch("phone")}

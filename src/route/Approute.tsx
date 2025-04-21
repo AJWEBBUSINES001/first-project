@@ -10,7 +10,7 @@ const Approute = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
-      { path: 'book-driver', element: <BookDriver /> },
+      { path: '/book-driver', element: <BookDriver /> },
     ],
   },
 ]);
